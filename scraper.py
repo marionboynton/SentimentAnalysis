@@ -1,13 +1,16 @@
+# UPDATE: this is the selected company (query for the tweet search)
+COMPANY = 'apple'
+
+import tweepy
+import datetime
+import pandas as pd
+import re
+
 def scrape():
-  '''This function scrapes twitter data which mentions the selected company: microsoft.
+  '''This function scrapes twitter data which mentions the selected company.
   It gets the data for the past three days and returns a dataframe.
   INPUT: NONE
-  OUTPUT: dataframe with text from twitter mentioning "microsoft". One row per tweet. '''
-
-  import tweepy
-  import datetime
-  import pandas as pd
-  import re
+  OUTPUT: dataframe with text from twitter mentioning the selected company. One row per tweet. '''
 
   access_token = "1289900179701800960-2lujUQFC8RbuCcOgDMbloRzYPQY7ve"
   access_token_secret = "7hWUucfMm6oYutWWTBWdCu0RbIIJylfHOM6F0d8CtgH3e"
@@ -25,7 +28,7 @@ def scrape():
 
   #Scrape the data
   text  =[]
-  for tweet in tweepy.Cursor(api.search, q="microsoft", lang="en").items(40000):
+  for tweet in tweepy.Cursor(api.search, q=COMPANY, lang="en").items(100):
       #keep only the past 3 days
       if tweet.created_at <= endDate and tweet.created_at >= startDate:
         text.append(tweet.text)
@@ -35,7 +38,7 @@ def scrape():
 
   #Perform basica cleaning: remove @mentions, #hastags and URLs
 
-  text_series = text_series.str.replace('@[A-Za-z0–9]+', '', regex=True)
+  text_series = text_series.str.replace('@[A-Za-z0Ã¢â‚¬â€œ9]+', '', regex=True)
   text_series = text_series.str.replace('#', '', regex=True)
   text_series = text_series.str.replace('RT[\s]+', '', regex=True)
 

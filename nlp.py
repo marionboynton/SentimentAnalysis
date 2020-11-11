@@ -1,38 +1,48 @@
+# UPDATE: this is the path were the models are stored
+path = "/content/drive/Shared drives/NLP sentiment for stocks/model/"
+
+# IMPORT
+KERAS_MODEL = "model.h5"
+WORD2VEC_MODEL = "model.w2v"
+TOKENIZER_MODEL = "tokenizer.pkl"
+ENCODER_MODEL = "encoder.pkl" 
+
+# SENTIMENT
+POSITIVE = "POSITIVE"
+NEGATIVE = "NEGATIVE"
+NEUTRAL = "NEUTRAL"
+SENTIMENT_THRESHOLDS = (0.4, 0.7)
+
+# KERAS
+from keras.models import load_model
+from keras.preprocessing.sequence import pad_sequences
+SEQUENCE_LENGTH = 300
+
+#UTILITY
+import time
+import pickle
+import re
+
+# TEXT CLEANING
+TEXT_CLEANING_RE = "@\S+|https?:\S+|http?:\S|[^A-Za-z0-9]+"
+
+# nltk
+import nltk
+from nltk.corpus import stopwords
+from  nltk.stem import SnowballStemmer
+import re
+
+# Downloading the necessary for preprocessing
+nltk.download('stopwords')
+
 def nlp():
-
-  # IMPORT
-  KERAS_MODEL = "model.h5"
-  WORD2VEC_MODEL = "model.w2v"
-  TOKENIZER_MODEL = "tokenizer.pkl"
-  ENCODER_MODEL = "encoder.pkl" 
-
-  # SENTIMENT
-  POSITIVE = "POSITIVE"
-  NEGATIVE = "NEGATIVE"
-  NEUTRAL = "NEUTRAL"
-  SENTIMENT_THRESHOLDS = (0.4, 0.7)
-
-  # KERAS
-  from keras.models import load_model
-  from keras.preprocessing.sequence import pad_sequences
-  SEQUENCE_LENGTH = 300
-
-  #UTILITY
-  import time
-  import pickle
-  import re
-
-  # TEXT CLEANING
-  TEXT_CLEANING_RE = "@\S+|https?:\S+|http?:\S|[^A-Za-z0-9]+"
-
-  # nltk
-  import nltk
-  from nltk.corpus import stopwords
-  from  nltk.stem import SnowballStemmer
+  '''This function calls the scraper function which scrapes the past three days of tweets containing the selected company name.
+  It performs a sentiment analysis of each tweet and gives the average over those three days.
+  INPUT: NONE
+  OUTPUT: sentiment average over the past three days.'''
 
   # Loads the saved keras model
   def load_models():
-    path = "/content/drive/Shared drives/NLP sentiment for stocks/model/"
 
     # Load the tokenizer.
     file = open(path + TOKENIZER_MODEL, 'rb')
@@ -45,7 +55,7 @@ def nlp():
 
     return tokenizer, model
 
-'''
+  '''
   # Gives a label to the sentiment value
   def decode_sentiment(score, include_neutral=True):
 
@@ -59,7 +69,7 @@ def nlp():
         return label
     else:
         return NEGATIVE if score < 0.5 else POSITIVE
-'''
+  '''
 
   # Predicts the sentiment value for a tweet
   def predict(text, include_neutral=True):
@@ -81,8 +91,6 @@ def nlp():
     # Getting the texts
     all_text = scrape()
 
-    # Downloading the necessary for preprocessing
-    nltk.download('stopwords')
     # Preprocessing data
     all_text.text = all_text.text.apply(lambda x: preprocess(x))
 
